@@ -1,0 +1,51 @@
+%Sampling frequency (Hz)
+Fs = 1000;
+% Sampling period (s)
+T = 1/Fs;
+% Signal length
+L = 1000;        
+% Time vector
+t = (0:L-1)*T;    
+% Create input signal (we are generating two sin waves and adding together to form the input signal)
+%f1 and f2 represents the frequency of first and second sin waves in (Hz)
+f1 = 50;         
+f2 = 120;
+% A1 and A2 represents the amplitude of first and second sin waves
+A1 = 0.7;        
+A2 = 1.2;         
+x = A1*sin(2*pi*f1*t) + A2*sin(2*pi*f2*t);
+
+% here we are plotting the input signal
+subplot(2,1,1);
+plot(t, x);
+title('Input Signal');
+xlabel('Time (s)');
+ylabel('Amplitude');
+
+% Computing Fourier series coefficients of the input signal
+N = length(x);
+% by applying the 'fft' function we will obtain the frequency domain
+%representaton of the signal
+X = fft(x)/N;
+f = Fs*(0:(N/2))/N;
+
+% here we are plotting the amplitude spectrum of the input signal
+subplot(2,1,2);
+stem(f, 2*abs(X(1:N/2+1)));
+title('Amplitude Spectrum');
+xlabel('Frequency (Hz)');
+ylabel('Magnitude');
+% Filter the signal by removing unwanted frequencies
+% Remove the frequencies below 80 Hz
+cutoff_frequency = 80;
+X_filtered = X;
+X_filtered(f < cutoff_frequency) = 0;
+
+% Reconstruct the filtered signal using inverse Fourier transform
+x_filtered = ifft(X_filtered)*N;
+% Plot the filtered signal
+figure;
+plot(t, x_filtered);
+title('Filtered Signal');
+xlabel('Time (s)');
+ylabel('Amplitude');
